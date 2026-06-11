@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RBXWear AI — Roblox Clothing Generator</title>
+  <meta name="description" content="Generate unique Roblox shirt and hoodie designs using AI. Instant, free, no login required." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ░░ TOAST CONTAINER ░░ -->
+  <div id="toast-container" aria-live="polite"></div>
+
+  <!-- ░░ IMAGE ZOOM MODAL ░░ -->
+  <div id="zoom-modal" class="modal" role="dialog" aria-modal="true" aria-label="Image preview">
+    <div class="modal-backdrop" id="modal-backdrop"></div>
+    <div class="modal-content">
+      <button class="modal-close" id="modal-close" aria-label="Close preview">✕</button>
+      <img id="zoom-image" src="" alt="Generated design preview" />
+      <p id="zoom-prompt-label"></p>
+    </div>
+  </div>
+
+  <!-- ░░ HEADER ░░ -->
+  <header class="site-header">
+    <div class="header-inner container">
+      <div class="logo">
+        <span class="logo-icon">◈</span>
+        <span class="logo-text">RBX<strong>Wear</strong> <span class="logo-ai">AI</span></span>
+      </div>
+      <nav class="header-nav">
+        <a href="#generator" class="nav-link">Generate</a>
+        <a href="#history" class="nav-link">History</a>
+        <a href="#templates" class="nav-link">Templates</a>
+      </nav>
+      <div class="header-badge">Beta</div>
+    </div>
+  </header>
+
+  <!-- ░░ HERO ░░ -->
+  <section class="hero" id="hero">
+    <div class="hero-scanlines" aria-hidden="true"></div>
+    <div class="hero-grid" aria-hidden="true"></div>
+    <div class="container hero-inner">
+      <div class="hero-eyebrow">AI-Powered · Free · Instant</div>
+      <h1 class="hero-title">
+        Generate Roblox Clothing<br />
+        <span class="hero-title-accent">with AI</span>
+      </h1>
+      <p class="hero-subtitle">
+        Describe any design — anime, luxury, streetwear, fantasy — and watch it come to life on a Roblox template in seconds.
+      </p>
+      <a href="#generator" class="hero-cta">Start Creating</a>
+    </div>
+    <div class="hero-deco" aria-hidden="true">
+      <div class="deco-shirt"></div>
+      <div class="deco-glow"></div>
+    </div>
+  </section>
+
+  <!-- ░░ GENERATOR ░░ -->
+  <section class="generator-section" id="generator">
+    <div class="container">
+      <div class="section-label">Generator</div>
+      <h2 class="section-title">Design Your Clothing</h2>
+
+      <div class="generator-layout">
+
+        <!-- LEFT: Controls -->
+        <div class="controls-card" id="controls-card">
+
+          <div class="form-group">
+            <label class="form-label" for="prompt-input">
+              Describe your design
+              <span class="label-hint">Be specific — colors, patterns, motifs</span>
+            </label>
+            <div class="input-row">
+              <textarea
+                id="prompt-input"
+                class="form-textarea"
+                rows="3"
+                maxlength="500"
+                placeholder="e.g. Black dragon with golden scales, red eyes, dark background…"
+                aria-describedby="prompt-counter"
+              ></textarea>
+            </div>
+            <div class="input-footer">
+              <span id="prompt-counter" class="char-counter">0 / 500</span>
+              <button class="icon-btn" id="copy-prompt-btn" title="Copy prompt" aria-label="Copy prompt text">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                Copy
+              </button>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="style-select">Style</label>
+              <div class="select-wrapper">
+                <select id="style-select" class="form-select">
+                  <option value="Anime">🌸 Anime</option>
+                  <option value="Luxury">💎 Luxury</option>
+                  <option value="Streetwear" selected>🏙️ Streetwear</option>
+                  <option value="Gaming">🎮 Gaming</option>
+                  <option value="Fantasy">🧙 Fantasy</option>
+                  <option value="Cyberpunk">⚡ Cyberpunk</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Clothing Type</label>
+              <div class="toggle-group" role="group" aria-label="Clothing type">
+                <button class="toggle-btn active" data-type="Shirt" id="type-shirt" aria-pressed="true">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.38 3.46L16 2a4 4 0 01-8 0L3.62 3.46a2 2 0 00-1.34 2.23l.58 3.57a1 1 0 00.99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 002-2V10h2.15a1 1 0 00.99-.84l.58-3.57a2 2 0 00-1.34-2.23z"/></svg>
+                  Shirt
+                </button>
+                <button class="toggle-btn" data-type="Hoodie" id="type-hoodie" aria-pressed="false">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 6.5l-3-3-3 3c-.93.93-2.11 1.5-3.5 1.5S8.43 7.43 7.5 6.5L4.5 3.5 1.5 6.5v4h3v10a1 1 0 001 1h14a1 1 0 001-1v-10h3v-4z"/></svg>
+                  Hoodie
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Composed prompt preview -->
+          <div class="prompt-preview" id="prompt-preview">
+            <span class="preview-label">Final prompt →</span>
+            <span id="preview-text" class="preview-text">Fill in the fields above to see your composed prompt</span>
+          </div>
+
+          <div class="controls-actions">
+            <button class="btn-generate" id="generate-btn" type="button">
+              <span class="btn-icon">✦</span>
+              <span class="btn-label">Generate Design</span>
+              <span class="btn-spinner" aria-hidden="true"></span>
+            </button>
+            <button class="btn-regen" id="regen-btn" type="button" disabled title="Regenerate with same prompt">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+              Regenerate
+            </button>
+          </div>
+        </div>
+
+        <!-- RIGHT: Preview -->
+        <div class="preview-card" id="preview-card">
+          <div class="preview-header">
+            <span class="preview-title">Preview</span>
+            <div class="preview-actions" id="preview-actions" style="display:none">
+              <button class="icon-btn" id="zoom-btn" aria-label="Zoom image">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+                Zoom
+              </button>
+              <button class="btn-download" id="download-btn" type="button">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Download
+              </button>
+            </div>
+          </div>
+
+          <div class="preview-canvas" id="preview-canvas">
+            <!-- Idle state -->
+            <div class="preview-idle" id="preview-idle">
+              <div class="idle-icon" aria-hidden="true">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.4"><path d="M20.38 3.46L16 2a4 4 0 01-8 0L3.62 3.46a2 2 0 00-1.34 2.23l.58 3.57a1 1 0 00.99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 002-2V10h2.15a1 1 0 00.99-.84l.58-3.57a2 2 0 00-1.34-2.23z"/></svg>
+              </div>
+              <p class="idle-text">Your generated design appears here</p>
+              <p class="idle-hint">Choose a style, enter a prompt, and hit Generate</p>
+            </div>
+            <!-- Loading state -->
+            <div class="preview-loading" id="preview-loading" style="display:none" aria-live="polite">
+              <div class="loading-ring">
+                <div></div><div></div><div></div><div></div>
+              </div>
+              <p class="loading-text">Generating your design…</p>
+              <p class="loading-sub" id="loading-sub">Painting fabric…</p>
+            </div>
+            <!-- Result state -->
+            <div class="preview-result" id="preview-result" style="display:none">
+              <img id="result-image" src="" alt="Generated Roblox clothing design" />
+              <div class="template-overlay" id="template-overlay"></div>
+            </div>
+          </div>
+
+          <!-- Template toggle -->
+          <div class="template-toggle" id="template-toggle" style="display:none">
+            <label class="toggle-label">
+              <input type="checkbox" id="template-mode" class="toggle-input" />
+              <span class="toggle-track"></span>
+              <span class="toggle-text">Show Roblox template overlay</span>
+            </label>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ░░ TEMPLATES INFO ░░ -->
+  <section class="templates-section" id="templates">
+    <div class="container">
+      <div class="section-label">Templates</div>
+      <h2 class="section-title">Roblox-Ready Sizing</h2>
+      <div class="templates-grid">
+        <div class="template-card">
+          <div class="template-icon">👕</div>
+          <h3 class="template-name">Shirt Template</h3>
+          <p class="template-desc">585×559 px — standard Roblox shirt format. Front, back, and sleeve panels.</p>
+          <ul class="template-specs">
+            <li>PNG, transparent bg</li>
+            <li>Front: 238×128 px</li>
+            <li>Back: 238×128 px</li>
+          </ul>
+        </div>
+        <div class="template-card">
+          <div class="template-icon">🧥</div>
+          <h3 class="template-name">Hoodie Template</h3>
+          <p class="template-desc">585×559 px — same canvas, with hood and pocket overlay included.</p>
+          <ul class="template-specs">
+            <li>PNG, transparent bg</li>
+            <li>Hood: 256×57 px</li>
+            <li>Pocket: 73×62 px</li>
+          </ul>
+        </div>
+        <div class="template-card template-card--tip">
+          <div class="template-icon">💡</div>
+          <h3 class="template-name">Pro Tips</h3>
+          <p class="template-desc">Get the cleanest results every time with these generation tips.</p>
+          <ul class="template-specs">
+            <li>Use high-contrast prompts</li>
+            <li>Name specific colors</li>
+            <li>Add "flat design" for simple styles</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ░░ HISTORY ░░ -->
+  <section class="history-section" id="history">
+    <div class="container">
+      <div class="history-header">
+        <div>
+          <div class="section-label">History</div>
+          <h2 class="section-title">Your Generations</h2>
+        </div>
+        <button class="btn-clear-history" id="clear-history-btn" type="button">Clear All</button>
+      </div>
+      <div class="history-grid" id="history-grid">
+        <div class="history-empty" id="history-empty">
+          <p>No designs generated yet.</p>
+          <p class="history-empty-hint">Your creations will appear here automatically.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ░░ FOOTER ░░ -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-logo">
+        <span class="logo-icon">◈</span>
+        <span>RBXWear AI</span>
+      </div>
+      <p class="footer-note">Powered by <a href="https://pollinations.ai" target="_blank" rel="noopener">Pollinations AI</a>. Not affiliated with Roblox Corporation.</p>
+      <p class="footer-copy">© 2026 RBXWear AI</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
